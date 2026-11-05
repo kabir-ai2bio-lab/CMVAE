@@ -1,13 +1,13 @@
 # Welcome to CMVAE!
 
-This repository corresponds to the article titled **"CMVAE: Contrastive Supervision Improves Single-Omic Latent Manifold for Breast Cancer Survival Prognosis"** (RLDP-BIO workshop, IEEE BIBM 2026).
+This repository corresponds to the article titled **"CMVAE: Contrastive Supervision Improves Single-Omic Latent Manifold for Breast Cancer Survival Prognosis"** (RLPD-BIO workshop, IEEE BIBM 2026).
 
 ![CMVAE Framework](plots/CMVAE_workflow.png)
 *Figure 1: Overview of the proposed CMVAE framework. (A) single-omic data handling and STS/LTS labeling, (B) CMVAE representation learning, (C) contrastive supervision, (D) prediction and prognosis evaluation.*
 
-Predicting whether a breast cancer patient will be a short-term (STS, < 5 years, deceased) or long-term (LTS, >= 5 years) survivor from a single omic profile is hard because the cohorts are small and the features are high dimensional. In this work, we developed CMVAE, a Contrastive Masked Denoising Variational Autoencoder. CMVAE randomly masks input features and reconstructs the clean profile, and it adds a supervised contrastive loss on the labeled STS/LTS patients so that the latent space reflects clinical outcome. Censored patients (follow-up < 5 years, no event) are used only for reconstruction. We evaluate CMVAE on four TCGA-BRCA omics (mRNA, DNA methylation, miRNA and copy number variation) with a leak-proof stratified 5-fold cross-validation, and compare it against 11 other representations (Raw, PCA, Gini, AE, VAE and MVAE variants) using logistic regression, random forest and polynomial SVM classifiers, with and without oversampling. Performance is reported with AUROC and the concordance index, together with Kaplan-Meier analysis.
+Predicting whether a breast cancer patient will be a short-term (STS, < 5 years, deceased) or long-term (LTS, >= 5 years) survivor from a single omic profile is hard because the cohorts are small and the features are high-dimensional. In this work, we developed CMVAE, a Contrastive Masked Denoising Variational Autoencoder. CMVAE randomly masks input features and reconstructs the clean profile, and it adds a supervised contrastive loss on the labeled STS/LTS patients so that the latent space reflects clinical outcome. Censored patients (follow-up < 5 years, no event) are used only for reconstruction. We evaluate CMVAE on four TCGA-BRCA omics (mRNA, DNA methylation, miRNA, and copy number variation) with a leak-proof stratified 5-fold cross-validation, and compare it against 11 other representations (Raw, PCA, Gini, AE, VAE, and MVAE variants) using logistic regression, random forest, and polynomial SVM classifiers, with and without oversampling. We report performance with AUROC and the concordance index, along with Kaplan-Meier analysis.
 
-**Note:** The real TCGA-BRCA data is not redistributed. A synthetic dataset in the same file format is provided in `data/dummy/BRCA` so that all the code can be run. Results on the synthetic data are only meant to show that the pipeline runs.
+**Note:** The real TCGA-BRCA data is not redistributed. A synthetic dataset in the same file format is provided in `data/dummy/BRCA` so the code can run. Results on the synthetic data are only meant to show that the pipeline runs.
 
 ## Installation
 ```bash
@@ -17,10 +17,10 @@ conda create -c conda-forge -n cmvae python=3.11 -y
 conda activate cmvae
 pip install -r requirements.txt
 ```
-Install the PyTorch build that matches your hardware from [pytorch.org](https://pytorch.org) if the default one does not suit you. All commands below are run from the repository root.
+Install the PyTorch build that matches your hardware from [pytorch.org](https://pytorch.org) if the default one does not suit you. Run all commands below from the repository root.
 
 ## Data
-The data was obtained from the [UCSC Xena browser](https://xenabrowser.net/) for the TCGA-BRCA cohort.
+We obtained the data from the [UCSC Xena browser](https://xenabrowser.net/) for the TCGA-BRCA cohort.
 
 | Data | Xena file |
 | :--- | :--- |
@@ -43,7 +43,7 @@ python EDA/label_distribution.py --data_dir data/dummy/BRCA
 ```
 
 ## Training and testing CMVAE
-The entry point is `run_cmvae.py`. Preprocessing (missing-rate filter, imputation, top-variance selection and z-scoring), representation learning, oversampling and classifier fitting are all done inside the training part of each cross-validation fold.
+The entry point is `run_cmvae.py`. Preprocessing (missing-rate filter, imputation, top-variance selection, and z-scoring), representation learning, oversampling, and classifier fitting are all done inside the training part of each cross-validation fold.
 
 ```bash
 # quick test (5 epochs)
@@ -63,7 +63,7 @@ python run_cmvae.py --omic all --data_dir data/dummy/BRCA
 | ```CMVAE.evaluation``` | Classifiers (LR, RF, PSVM), oversampling (NO, ROS, SMOTE) and metrics |
 | ```CMVAE.configs``` | All hyper-parameters |
 
-Main settings: latent dimension 128, masking ratio 0.15, contrastive weight 0.1, temperature 0.2, KL weight up to 0.01, MMD weight up to 1.0, 20 warm-up epochs, five-year threshold 1826.25 days, seed 42 and 5 folds. Omic specific settings:
+Main settings: latent dimension 128, masking ratio 0.15, contrastive weight 0.1, temperature 0.2, KL weight up to 0.01, MMD weight up to 1.0, 20 warm-up epochs, five-year threshold 1826.25 days, seed 42 and 5 folds. Omic-specific settings:
 
 | Omic | Missing-rate filter | Top-variance features | Epochs | Batch size |
 | :--- | :--- | :--- | :--- | :--- |
@@ -73,7 +73,7 @@ Main settings: latent dimension 128, masking ratio 0.15, contrastive weight 0.1,
 | CNV | > 20% | 2000 | 80 | 64 |
 
 ## Benchmark methods
-All benchmark methods use the same patients, labels and folds as CMVAE. The MAE folder is the masked denoising VAE without the contrastive term.
+All benchmark methods use the same patients, labels, and folds as CMVAE. The MAE folder is the masked denoising VAE without the contrastive term.
 
 | Method | Run |
 | :--- | :--- |
